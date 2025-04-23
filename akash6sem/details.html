@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Details</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #717070;
+        }
+
+        header {
+            background-color: #6569da;
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #3939be;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f1f1f1;
+        }
+
+        section {
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .appointments-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #6569da;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 20px;
+            color: white;
+            background-color: #3939be;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .button:hover {
+            background-color: #2a2a9f;
+            transform: translateY(-3px);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            background-color: #3939be;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn span {
+            font-size: 18px;
+            margin-right: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #3939be;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Doctor Appointments</h1>
+    </header>
+
+    <nav>
+        <a href="main.html">Home</a>
+        <a href="book.html">Book Appointment</a>
+        <a href="view.html">Check Appointment</a>
+        <a href="doctor.html">Doctors</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section>
+        <h2>Appointments for <span id="doctorName"></span></h2>
+        <div id="appointmentList">
+            <p>No appointments found.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="doctor-details">
+            <h3 id="doctorName"></h3>
+            <p id="doctorSpecialty"></p>
+            <p id="doctorExperience"></p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2025 HABS PavanAkash and Team.
+    </footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const doctorId = urlParams.get("id");
+        const doctorNameElement = document.getElementById("doctorName");
+        const appointmentList = document.getElementById("appointmentList");
+    
+        if (!doctorId) {
+            doctorNameElement.textContent = "Unknown Doctor";
+            return;
+        }
+    
+        const doctorNames = {
+            "JohnDoe": "Dr. John Doe",
+            "SarahSmith": "Dr. Sarah Smith",
+            "EmmaBrown": "Dr. Emma Brown",
+            "MichaelLee": "Dr. Michael Lee"
+        };
+    
+        const doctorName = doctorNames[doctorId] || "Unknown Doctor";
+        doctorNameElement.textContent = doctorName;
+    
+        const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+        const filteredAppointments = appointments.filter(appointment => appointment.doctor === doctorName);
+    
+        if (filteredAppointments.length === 0) {
+            appointmentList.innerHTML = "<p>No appointments found.</p>";
+        } else {
+            appointmentList.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                    </tr>
+                    ${filteredAppointments.map(appt => `
+                        <tr>
+                            <td>${appt.name}</td>
+                            <td>${appt.email}</td>
+                            <td>${appt.phone}</td>
+                            <td>${appt.appointmentDate}</td>
+                        </tr>
+                    `).join("")}
+                </table>
+            `;
+        }
+    });
+</script>
+
+</body>
+</html>

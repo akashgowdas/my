@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View your booked appointments in the hospital system.">
+    <title>View Appointments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #717070;
+        }
+
+        header {
+            background-color: #6569da;
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #3939be;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f1f1f1;
+        }
+
+        section {
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .appointments-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #6569da;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-container select,
+        .search-container input {
+            padding: 8px;
+            margin: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 8px 15px;
+            font-size: 16px;
+            color: white;
+            background-color: #3939be;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #2a2a9f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .no-results {
+            text-align: center;
+            color: red;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #3939be;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>View Appointments</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="main.html">Home</a>
+        <a href="book.html">Book Appointment</a>
+        <a href="view.html">Check Appointment</a>
+        <a href="doctor.html">Doctors</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <!-- Search Form -->
+    <section>
+        <div class="appointments-container">
+            <h2>Your Appointments</h2>
+            <div class="search-container">
+                <select id="searchDoctor">
+                    <option value="">Select Doctor</option>
+                </select>
+                <input type="date" id="searchDate">
+                <button onclick="searchAppointments()">Search</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Full Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>Appointment Doctor</th>
+                        <th>Appointment Date</th>
+                    </tr>
+                </thead>
+                <tbody id="appointments-body">
+                    <!-- Dynamic data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 HABS PavanAkash and Team.
+    </footer>
+
+    <!-- JavaScript to Load and Filter Appointments -->
+    <script>
+        window.onload = function () {
+            loadAppointments();
+            populateDoctorDropdown();
+        };
+    
+        // Listen for localStorage changes (Detects admin updates)
+        window.addEventListener("storage", function(event) {
+            if (event.key === "appointmentsUpdated") {
+                console.log("Appointments updated, reloading...");
+                loadAppointments();
+            }
+        });
+    
+        function loadAppointments() {
+            const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            let tableBody = document.getElementById('appointments-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+    
+            if (appointments.length > 0) {
+                appointments.forEach((appointment, index) => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${appointment.id || index + 1}</td>
+                        <td>${appointment.name}</td>
+                        <td>${appointment.email}</td>
+                        <td>${appointment.phone}</td>
+                        <td>${appointment.doctor}</td>
+                        <td>${appointment.appointmentDate}</td>
+                        <td>${appointment.status || 'Pending'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                let row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" class="no-results">No appointments found.</td>';
+                tableBody.appendChild(row);
+            }
+        }
+    
+        function populateDoctorDropdown() {
+            const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            const doctorDropdown = document.getElementById('searchDoctor');
+            doctorDropdown.innerHTML = '<option value="">Select Doctor</option>'; // Reset dropdown
+    
+            let doctors = new Set();
+            appointments.forEach(appointment => doctors.add(appointment.doctor));
+    
+            doctors.forEach(doctor => {
+                let option = document.createElement('option');
+                option.value = doctor;
+                option.textContent = doctor;
+                doctorDropdown.appendChild(option);
+            });
+        }
+    
+        function searchAppointments() {
+            const doctor = document.getElementById('searchDoctor').value;
+            const date = document.getElementById('searchDate').value;
+    
+            const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            let tableBody = document.getElementById('appointments-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+    
+            let filteredAppointments = appointments.filter(appointment => {
+                return (
+                    (doctor === "" || appointment.doctor === doctor) &&
+                    (date === "" || appointment.appointmentDate === date)
+                );
+            });
+    
+            if (filteredAppointments.length > 0) {
+                filteredAppointments.forEach((appointment, index) => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${appointment.id || index + 1}</td>
+                        <td>${appointment.name}</td>
+                        <td>${appointment.email}</td>
+                        <td>${appointment.phone}</td>
+                        <td>${appointment.doctor}</td>
+                        <td>${appointment.appointmentDate}</td>
+                        <td>${appointment.status || 'Pending'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                let row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" class="no-results">No matching appointments found.</td>';
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+    
+
+</body>
+</html> 

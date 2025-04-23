@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book an appointment with our hospital.">
+    <title>Book an Appointment - Hospital Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #717070;
+        }
+
+        header {
+            background-color: #6569da;
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #3939be;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f1f1f1;
+        }
+
+        section {
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .appointment-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #6569da;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        .submit-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 20px;
+            margin: 20px 0;
+            color: white;
+            background-color: #3939be;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #2a2a9f;
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #3939be;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Book an Appointment</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="main.html">Home</a>
+        <a href="book.html">Book Appointment</a>
+        <a href="view.html">Check Appointment</a>
+        <a href="doctor.html">Doctors</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <!-- Booking Section -->
+    <section>
+        <div class="appointment-container">
+            <h2>Schedule Your Appointment</h2>
+
+            <form id="appointment-form">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="doctor">Select Doctor</label>
+                <select id="doctor" name="doctor" required>
+                    <option value="" disabled selected>Select a doctor</option>
+                    <option value="Dr. John Doe">Dr. John Doe - Cardiologist</option>
+                    <option value="Dr. Sarah Smith">Dr. Sarah Smith - Dermatologist</option>
+                    <option value="Dr. Michael Lee">Dr. Michael Lee - Neurologist</option>
+                    <option value="Dr. Emma Brown">Dr. Emma Brown - Pediatrician</option>
+                </select>
+
+                <label for="appointment-time">Preferred Appointment Time</label>
+                <select id="appointment-time" name="appointment-time" required>
+                    <option value="" disabled selected>Select a time</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                </select>
+
+                <label for="appointment-date">Preferred Appointment Date</label>
+                <input type="date" id="appointment-date" name="appointment-date" required>
+
+                <button type="button" class="submit-btn" onclick="submitAppointment()">Submit Appointment</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 HABS PavanAkash and Team.
+    </footer>
+
+    <!-- JavaScript -->
+<!-- EmailJS Library -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+<script>
+    // Initialize EmailJS
+    emailjs.init("ZZDxBUxnRuATj3RKN");
+
+    function submitAppointment() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const doctor = document.getElementById("doctor").value;
+        const appointmentDate = document.getElementById("appointment-date").value;
+        const appointmentTime = document.getElementById("appointment-time").value;
+
+        if (!name || !email || !phone || !doctor || !appointmentDate || !appointmentTime) {
+            alert("Please fill in all fields!");
+            return;
+        }
+
+        let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+        let isBooked = appointments.some(appt =>
+            appt.doctor === doctor &&
+            appt.appointmentDate === appointmentDate &&
+            appt.appointmentTime === appointmentTime
+        );
+
+        if (isBooked) {
+            alert("The doctor is busy at this time. Please select a different time.");
+            return;
+        }
+
+        let newAppointment = {
+            id: appointments.length + 1,
+            name,
+            email,
+            phone,
+            doctor,
+            appointmentDate,
+            appointmentTime,
+            status: "Pending"
+        };
+
+        appointments.push(newAppointment);
+        localStorage.setItem("appointments", JSON.stringify(appointments));
+
+        alert(`Appointment successfully booked at ${appointmentTime}!`);
+
+        // ✅ Send Email to entered email
+        emailjs.send("service_x3dvh84", "template_rud1d9u", {
+            user_name: name,
+            user_email: email, // this sends to the email entered in the form
+            user_phone: phone,
+            doctor_name: doctor,
+            appointment_date: appointmentDate,
+            appointment_time: appointmentTime
+        }).then(response => {
+            console.log("SUCCESS!", response.status, response.text);
+        }).catch(error => {
+            console.log("FAILED...", error);
+        });
+
+        // Reset the form
+        document.getElementById("appointment-form").reset();
+    }
+</script>
+
+    <!-- EmailJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <script> emailjs.init("ZZDxBUxnRuATj3RKN"); </script>
+
+</body>
+</html>

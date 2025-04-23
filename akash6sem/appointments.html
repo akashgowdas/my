@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Appointments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3939be;
+            color: white;
+        }
+
+        .actions button {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 3px;
+        }
+
+        .approve { background-color: #28a745; color: white; }
+        .reschedule { background-color: #ffc107; color: black; }
+        .reject { background-color: #dc3545; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <h2>Manage Appointments</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="appointmentsTable">
+            <!-- Appointments will be loaded here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Sample appointment data
+        let appointments = [
+            { id: 1, name: "John Doe", date: "2025-03-25", time: "10:00 AM", status: "Pending" },
+            { id: 2, name: "Jane Smith", date: "2025-03-26", time: "11:00 AM", status: "Pending" }
+        ];
+
+        // Load data from local storage or set sample data
+        if (!localStorage.getItem("appointments")) {
+            localStorage.setItem("appointments", JSON.stringify(appointments));
+        }
+
+        function loadAppointments() {
+            let appointmentsData = JSON.parse(localStorage.getItem("appointments"));
+            let tableBody = document.getElementById("appointmentsTable");
+            tableBody.innerHTML = "";
+
+            appointmentsData.forEach((appointment, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${appointment.name}</td>
+                        <td>${appointment.date}</td>
+                        <td>${appointment.time}</td>
+                        <td id="status-${index}">${appointment.status}</td>
+                        <td class="actions">
+                            <button class="approve" onclick="updateAppointment(${index}, 'Approved')">Approve</button>
+                            <button class="reschedule" onclick="updateAppointment(${index}, 'Rescheduled')">Reschedule</button>
+                            <button class="reject" onclick="updateAppointment(${index}, 'Rejected')">Reject</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateAppointment(index, newStatus) {
+            let appointmentsData = JSON.parse(localStorage.getItem("appointments"));
+            appointmentsData[index].status = newStatus;
+            localStorage.setItem("appointments", JSON.stringify(appointmentsData));
+
+            // Update the UI
+            document.getElementById(`status-${index}`).innerText = newStatus;
+            alert(`Appointment updated to ${newStatus}`);
+        }
+
+        // Load appointments when the page loads
+        window.onload = loadAppointments;
+    </script>
+
+</body>
+</html>

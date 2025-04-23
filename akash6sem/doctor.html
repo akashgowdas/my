@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors - Doctor Appointment Management System</title>
+    <style>
+        /* styles.css */
+
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #717070;
+        }
+
+        header {
+            background-color: #6569da;
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #3939be;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f1f1f1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #3939be;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Specific Styles */
+        section {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            color: #6569da;
+        }
+
+        .doctors-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .doctor-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 280px;
+            text-align: center;
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctor-card img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .doctor-card h3 {
+            color: #3939be;
+        }
+
+        .doctor-card p {
+            font-size: 14px;
+            color: #717070;
+        }
+
+        .doctor-card a {
+            color: #6569da;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .doctor-details-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .doctor-details-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        h3 {
+            color: #6569da;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Meet Our Doctors</h1>
+    </header>
+
+    <nav>
+        <a href="main.html">Home</a>
+        <a href="book.html">Book Appointment</a>
+        <a href="view.html">Check Appointment</a>
+        <a href="doctor.html">Doctors</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <section>
+        <h2>Our Doctors</h2>
+        <div class="doctors-container">
+            <div class="doctor-card">
+                <img src="doctor1.jpg" alt="Dr. John Doe">
+                <h3>Dr. John Doe</h3>
+                <p>Specialty: Cardiologist</p>
+                <p>Experience: 15 years</p>
+                <p><a href="details.html?id=JohnDoe">View Details</a></p>
+            </div>
+
+            <div class="doctor-card">
+                <img src="doctor2.jpg" alt="Dr. Sarah Smith">
+                <h3>Dr. Sarah Smith</h3>
+                <p>Specialty: Dermatologist</p>
+                <p>Experience: 10 years</p>
+                <p><a href="details.html?id=SarahSmith">View Details</a></p>
+            </div> 
+
+            <div class="doctor-card">
+                <img src="doctor3.jpg" alt="Dr. Emma Brown">
+                <h3>Dr. Emma Brown</h3>
+                <p>Specialty: Pediatrician</p>
+                <p>Experience: 8 years</p>
+                <p><a href="details.html?id=EmmaBrown">View Details</a></p>
+            </div>
+
+            <div class="doctor-card">
+                <img src="doctor4.jpg" alt="Dr. Michael Lee">
+                <h3>Dr. Michael Lee</h3>
+                <p>Specialty: Neurologist</p>
+                <p>Experience: 12 years</p>
+                <p><a href="details.html?id=MichaelLee">View Details</a></p>
+
+            </div>
+        </div>
+    
+    </section>
+    <script>
+        function countAppointments() {
+            const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+            const doctorCounts = {};
+    
+            // Initialize doctor count dictionary
+            document.querySelectorAll(".doctor-card h3").forEach(doctor => {
+                doctorCounts[doctor.textContent.trim()] = 0;
+            });
+    
+            // Count appointments for each doctor
+            appointments.forEach(appointment => {
+                if (doctorCounts.hasOwnProperty(appointment.doctor)) {
+                    doctorCounts[appointment.doctor]++;
+                }
+            });
+    
+            // Update the appointment count in the doctor cards
+            document.querySelectorAll(".doctor-card").forEach(card => {
+                const doctorName = card.querySelector("h3").textContent.trim();
+                const count = doctorCounts[doctorName] || 0;
+                card.querySelector(".appointment-count").textContent = `Appointments booked: ${count}`;
+            });
+        }
+    
+        window.addEventListener("DOMContentLoaded", countAppointments);
+    </script>
+    
+    
+
+    <footer>
+        &copy; 2025 HABS PavanAkash and Team.
+    </footer>
+
+</body>
+</html>
